@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/controller/Usercontroller.php';
-
+require_once __DIR__ . '/controller/ProductController.php';
 
 $test = new Usercontroller();
 $test->showUser();
