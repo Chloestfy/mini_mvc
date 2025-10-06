@@ -13,8 +13,6 @@ class ProductController
     {
         $products = [
             new Product("Lampe de bureau", 29.99),
-            new Product("Clavier mécanique", 89.99),
-            new Product("Écran 27 pouces", 199.99)
         ];
 
         require __DIR__ . '/../view/productListView.php';

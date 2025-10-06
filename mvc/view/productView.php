@@ -3,19 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Liste des produits</title>
+    <title>Produit</title>
 </head>
 
 <body>
-    <h1>Nos Produits :</h1>
-    <ul>
-        <?php foreach ($products as $product): ?>
-            <li>
-                <?= htmlspecialchars($product->title, ENT_QUOTES, 'UTF-8') ?> -
-                <?= htmlspecialchars(number_format($product->price, 2, ',', ' '), ENT_QUOTES, 'UTF-8') ?> €
-            </li>
-        <?php endforeach; ?>
-    </ul>
+
+    <hr>
+
+    <h1>Produit :</h1>
+    <p>
+        <?= htmlspecialchars($product->getTitle(), ENT_QUOTES, 'UTF-8') ?> -
+        <?= htmlspecialchars(number_format($product->getPrice(), 2, ',', ' '), ENT_QUOTES, 'UTF-8') ?> €
+    </p>
 </body>
 
 </html>
