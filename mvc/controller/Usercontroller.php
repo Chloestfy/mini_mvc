@@ -1,13 +1,12 @@
 <?php
-
 require_once __DIR__ . '/../model/User.php';
 
 
-class Usercontroller
+class UserController
 {
     public function showUser()
     {
-        $user = new User("chloe");
-        require_once __DIR__ . '/../view/userView.php';
+        $user = new User("Chloe Dijoux");
+        require __DIR__ . '/../view/userView.php';
     }
 }

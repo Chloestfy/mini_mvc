@@ -1,18 +1,18 @@
 <?php
 class Product
 {
-    private $title;
+    private $name;
     private $price;
 
-    public function __construct($title, $price)
+    public function __construct($name, $price)
     {
-        $this->title = $title;
+        $this->name = $name;
         $this->price = $price;
     }
 
-    public function getTitle()
+    public function getName()
     {
-        return $this->title;
+        return $this->name;
     }
 
     public function getPrice()

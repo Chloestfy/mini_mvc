@@ -1,33 +1,36 @@
 <?php
-require_once __DIR__ . '/controller/Usercontroller.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/controller/UserController.php';
+
+
 require_once __DIR__ . '/controller/ProductController.php';
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-$test = new Usercontroller();
+$test = new UserController();
 $test->showUser();
+// $controller = new ProductController();
+// $controller->showProductList();
 
-
-echo '<nav>
-    <a href="index.php?page=user">Utilisateur</a> |
-    <a href="index.php?page=product">Produit</a> |
-</nav><hr>';
-
-
-$page = $_GET['page'] ?? 'user';
+$page = $_GET['page'] ?? '';
 
 switch ($page) {
-    case 'user':
-        $controller = new Usercontroller();
-        $controller->showUser();
-        break;
-
     case 'product':
         $controller = new ProductController();
         $controller->showProduct();
         break;
+    case 'products':  // <- note le "s"
+        $controller = new ProductController();
+        $controller->showProductList();
+        break;
+    case 'user':
+        echo "Utilisateur : Nom d'utilisateur.";
+        break;
+    default:
+        echo "Page non trouvée.";
+        break;
 }
-
 
 $pdo = new PDO("mysql:host=localhost;dbname=exo_mvc;", username: "root", password: "");
 $quiery = "SELECT * FROM User";
