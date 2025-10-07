@@ -1,22 +1,57 @@
 <?php
-require_once __DIR__ . '/../model/Product.php';
 
+require_once __DIR__ . '/../model/dao/ProductDao.php';
+require_once __DIR__ . '/../model/Product.php';
 
 class ProductController
 {
-    public function showProduct()
+    private ProductDao $productDao;
+
+    public function __construct(ProductDao $productDao)
     {
-        $product = new Product("Chaussures", 59.99);
+        $this->productDao = $productDao;
     }
 
-
-    public function showProductList()
+    public function displayProductList()
     {
-        $products = [
-            new Product("Chaussures", 59.99),
-            new Product("T-shirt", 19.99),
-            new Product("Jean", 39.99)
-        ];
+        $products = $this->productDao->getAllProducts();
         require_once __DIR__ . '/../view/productListView.php';
     }
+
+    public function displayProduct(int $id)
+    {
+        $product = $this->productDao->getProductById($id);
+        if (!$product) {
+            echo "Produit non trouvé.";
+            return;
+        }
+        require_once __DIR__ . '/../view/productView.php';
+    }
 }
+
+
+
+
+// require_once __DIR__ . '/../model/Product.php';
+
+// class ProductController
+// {
+//     private ProductDao $productDao;
+
+//     public function __construct(ProductDao $productDao)
+//     {
+//         $this->productDao = $productDao;
+//     }
+
+//     public function displayAllProducts(): void
+//     {
+//         $products = $this->productDao->getAllProducts();
+//         require_once __DIR__ . '/../view/productView.php';
+//     }
+
+//     public function showProduct(): void
+//     {
+//         // Ici tu pourrais récupérer un produit spécifique si besoin
+//         require_once __DIR__ . '/../view/productView.php';
+//     }
+// }

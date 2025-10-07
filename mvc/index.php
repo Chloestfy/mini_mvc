@@ -3,38 +3,74 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/controller/UserController.php';
+require_once 'DataBase.php';
+require_once 'model/dao/UserDao.php';
+require_once 'model/dao/ProductDao.php';
+require_once 'controller/UserController.php';
+require_once 'controller/ProductController.php';
 
+$pdo = DataBase::getConnection();
 
-require_once __DIR__ . '/controller/ProductController.php';
+$userDao = new UserDao($pdo);
+$productDao = new ProductDao($pdo);
 
-$test = new UserController();
-$test->showUser();
-// $controller = new ProductController();
-// $controller->showProductList();
+$users = $userDao->getAllUsers();
+//var_dump($users);
 
-$page = $_GET['page'] ?? '';
+$userController = new UserController($userDao);
+$productController = new ProductController($productDao);
+
+$page = $_GET['page'] ?? 'users';
 
 switch ($page) {
-    case 'product':
-        $controller = new ProductController();
-        $controller->showProduct();
+    case 'users':
+        $userController->displayAllUsers();
         break;
-    case 'products':  // <- note le "s"
-        $controller = new ProductController();
-        $controller->showProductList();
-        break;
+
     case 'user':
-        echo "Utilisateur : Nom d'utilisateur.";
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            echo "Identifiant utilisateur invalide.";
+        } else {
+            $userController->displayUserProfile((int)$_GET['id']);
+        }
         break;
+
+    case 'products':
+        $productController->displayProductList();
+        break;
+
+    case 'product':
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            echo "Identifiant du produit invalide.";
+        } else {
+            $productController->displayProduct((int)$_GET['id']);
+        }
+        break;
+
     default:
         echo "Page non trouvée.";
         break;
 }
 
-$pdo = new PDO("mysql:host=localhost;dbname=exo_mvc;", username: "root", password: "");
-$quiery = "SELECT * FROM User";
-$stmt = $pdo->prepare($quiery);
-$stmt->execute();
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-print_r($data);
+
+// $page = $_GET['page'] ?? '';
+
+// switch ($page) {
+//     case 'product':
+//         $controller = new ProductController();
+//         $controller->showProduct();
+//         break;
+//     case 'products':  // <- note le "s"
+//         $controller = new ProductController();
+//         $controller->showProductList();
+//         break;
+//     case 'user':
+//         echo "Utilisateur : Nom d'utilisateur.";
+//         break;
+//     default:
+//         echo "Page non trouvée.";
+//         break;
+// }
+
+
+//http://localhost/mini_mvc/mvc/index.php?page=products
