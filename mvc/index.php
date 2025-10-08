@@ -53,10 +53,15 @@ switch ($page) {
             $productController->displayProduct($id);
         } elseif ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $productController->addProduct($_POST);
+        } elseif ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'GET' && $id !== null) {
+            $productController->editProduct($id);
+        } elseif ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productController->updateProduct($_POST);
         } else {
             echo "Action produit inconnue ou ID manquant.";
         }
         break;
+
 
     default:
         echo "Page non trouvée.";

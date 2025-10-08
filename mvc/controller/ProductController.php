@@ -52,4 +52,34 @@ class ProductController
 
         $this->displayProductList();
     }
+    public function editProduct(int $id)
+    {
+        $product = $this->productDao->getProductById($id);
+        if (!$product) {
+            echo "Produit non trouvé.";
+            return;
+        }
+        require_once __DIR__ . '/../view/productEditView.php';
+    }
+
+    public function updateProduct(array $data)
+    {
+        $id = (int)$data['id'];
+        $nom = trim($data['nom']);
+        $description = trim($data['description']);
+        $prix = (float)$data['prix'];
+
+        if ($id && $nom && $description && $prix > 0) {
+            $success = $this->productDao->updateProduct($id, $nom, $description, $prix);
+            if ($success) {
+                echo "Produit mis à jour avec succès.<br>";
+            } else {
+                echo "Erreur lors de la mise à jour.<br>";
+            }
+        } else {
+            echo "Données invalides.";
+        }
+
+        $this->displayProductList();
+    }
 }

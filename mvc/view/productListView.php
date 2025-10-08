@@ -26,9 +26,11 @@
                     <input type="hidden" name="id" value="<?= htmlspecialchars($product->id) ?>">
                     <button type="submit" onclick="return confirm('Supprimer ce produit ?')">Supprimer</button>
                 </form>
+
             </li>
         <?php endforeach; ?>
     </ul>
+    <!-- boutton ajouter un nouveau produit -->
     <h2>Ajouter un nouveau produit</h2>
     <form action="index.php" method="post">
         <input type="hidden" name="page" value="productaction">

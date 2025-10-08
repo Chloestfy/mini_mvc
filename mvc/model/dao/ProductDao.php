@@ -44,4 +44,9 @@ class ProductDao
         $stmt = $this->pdo->prepare("INSERT INTO product (nom, description, pix) VALUES (?, ?, ?)");
         return $stmt->execute([$nom, $description, $pix]);
     }
+    public function updateProduct(int $id, string $nom, string $description, float $pix): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE product SET nom = ?, description = ?, pix = ? WHERE id = ?");
+        return $stmt->execute([$nom, $description, $pix, $id]);
+    }
 }
