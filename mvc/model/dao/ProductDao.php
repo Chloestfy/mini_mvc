@@ -1,5 +1,4 @@
 <?php
-
 class ProductDao
 {
     private PDO $pdo;
@@ -9,32 +8,21 @@ class ProductDao
         $this->pdo = $pdo;
     }
 
+    private function mapRowToProduct(array $row): Product
+    {
+        return new Product(
+            (int)$row['id'],
+            $row['nom'],
+            $row['description'],
+            (float)$row['pix'] // Utilise 'pix' ici
+        );
+    }
+
     public function getAllProducts(): array
     {
-        $query = "SELECT * FROM product";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $products = [];
-        foreach ($data as $row) {
-            $id = (int)($row['id'] ?? 0);
-            $nom = $row['nom'] ?? ($row['name'] ?? 'Produit sans nom');
-            $description = $row['description'] ?? '';
-            $prix = 0.0;
-            if (!empty($row['pix'])) {
-                $prix = (float)$row['pix'];
-            } elseif (!empty($row['prix'])) {
-                $prix = (float)$row['prix'];
-            } elseif (!empty($row['price'])) {
-                $prix = (float)$row['price'];
-            }
-
-            $product = new Product($id, $nom, $description, $prix);
-            $products[] = $product;
-        }
-
-        return $products;
+        $stmt = $this->pdo->query("SELECT * FROM product");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'mapRowToProduct'], $rows);
     }
 
     public function getProductById(int $id): ?Product
@@ -42,23 +30,18 @@ class ProductDao
         $stmt = $this->pdo->prepare("SELECT * FROM product WHERE id = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $this->mapRowToProduct($row) : null;
+    }
 
-        if ($row) {
-            $id = (int)($row['id'] ?? 0);
-            $nom = $row['nom'] ?? ($row['name'] ?? 'Produit sans nom');
-            $description = $row['description'] ?? '';
-            $prix = 0.0;
-            if (!empty($row['pix'])) {
-                $prix = (float)$row['pix'];
-            } elseif (!empty($row['prix'])) {
-                $prix = (float)$row['prix'];
-            } elseif (!empty($row['price'])) {
-                $prix = (float)$row['price'];
-            }
+    public function deleteProductById(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM product WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
 
-            return new Product($id, $nom, $description, $prix);
-        }
-
-        return null;
+    public function insertProduct(string $nom, string $description, float $pix): bool
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO product (nom, description, pix) VALUES (?, ?, ?)");
+        return $stmt->execute([$nom, $description, $pix]);
     }
 }

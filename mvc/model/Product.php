@@ -1,5 +1,4 @@
 <?php
-
 class Product
 {
     public int $id;

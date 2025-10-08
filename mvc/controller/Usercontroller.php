@@ -1,9 +1,7 @@
 <?php
-require_once __DIR__ . '/../model/User.php';
-
 class UserController
 {
-    public $userDao;
+    private $userDao;
 
     public function __construct($userDao)
     {
@@ -13,7 +11,6 @@ class UserController
     public function displayAllUsers()
     {
         $users = $this->userDao->getAllUsers();
-        var_dump($users);
         require_once __DIR__ . '/../view/userView.php';
     }
 
@@ -25,5 +22,31 @@ class UserController
             return;
         }
         require_once __DIR__ . '/../view/userProfileView.php';
+    }
+
+    public function deleteUser(int $id)
+    {
+        $success = $this->userDao->deleteUserById($id);
+        if ($success) {
+            echo "Utilisateur supprimé.<br>";
+        } else {
+            echo "Échec de la suppression.<br>";
+        }
+
+        $this->displayAllUsers();
+    }
+    public function addUser(array $data)
+    {
+        $nom = trim($data['nom']);
+        $prenom = trim($data['prenom']);
+
+        if ($nom && $prenom) {
+            $this->userDao->insertUser($nom, $prenom);
+            echo "Utilisateur ajouté avec succès.<br>";
+        } else {
+            echo "Données invalides.";
+        }
+
+        $this->displayAllUsers();
     }
 }

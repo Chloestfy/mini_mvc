@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 require_once 'DataBase.php';
 require_once 'model/dao/UserDao.php';
 require_once 'model/dao/ProductDao.php';
+require_once 'model/User.php';
+require_once 'model/Product.php';
 require_once 'controller/UserController.php';
 require_once 'controller/ProductController.php';
 
@@ -14,24 +16,29 @@ $pdo = DataBase::getConnection();
 $userDao = new UserDao($pdo);
 $productDao = new ProductDao($pdo);
 
-$users = $userDao->getAllUsers();
-//var_dump($users);
-
 $userController = new UserController($userDao);
 $productController = new ProductController($productDao);
 
-$page = $_GET['page'] ?? 'users';
+$request = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+
+$page = $request['page'] ?? 'users';
+$action = $request['action'] ?? null;
+$id = isset($request['id']) && is_numeric($request['id']) ? (int)$request['id'] : null;
 
 switch ($page) {
     case 'users':
         $userController->displayAllUsers();
         break;
 
-    case 'user':
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-            echo "Identifiant utilisateur invalide.";
+    case 'useraction':
+        if ($action === 'showProfile' && $id !== null) {
+            $userController->displayUserProfile($id);
+        } elseif ($action === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST' && $id !== null) {
+            $userController->deleteUser($id);
+        } elseif ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userController->addUser($_POST);
         } else {
-            $userController->displayUserProfile((int)$_GET['id']);
+            echo "Action utilisateur inconnue ou ID manquant.";
         }
         break;
 
@@ -39,11 +46,15 @@ switch ($page) {
         $productController->displayProductList();
         break;
 
-    case 'product':
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-            echo "Identifiant du produit invalide.";
+    case 'productaction':
+        if ($action === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST' && $id !== null) {
+            $productController->deleteProduct($id);
+        } elseif ($action === 'show' && $_SERVER['REQUEST_METHOD'] === 'GET' && $id !== null) {
+            $productController->displayProduct($id);
+        } elseif ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productController->addProduct($_POST);
         } else {
-            $productController->displayProduct((int)$_GET['id']);
+            echo "Action produit inconnue ou ID manquant.";
         }
         break;
 
@@ -53,24 +64,7 @@ switch ($page) {
 }
 
 
-// $page = $_GET['page'] ?? '';
 
-// switch ($page) {
-//     case 'product':
-//         $controller = new ProductController();
-//         $controller->showProduct();
-//         break;
-//     case 'products':  // <- note le "s"
-//         $controller = new ProductController();
-//         $controller->showProductList();
-//         break;
-//     case 'user':
-//         echo "Utilisateur : Nom d'utilisateur.";
-//         break;
-//     default:
-//         echo "Page non trouvée.";
-//         break;
-// }
 
 
 //http://localhost/mini_mvc/mvc/index.php?page=products

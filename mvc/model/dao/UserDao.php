@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../User.php';
 
 class UserDao
 {
@@ -9,20 +10,20 @@ class UserDao
         $this->pdo = $pdo;
     }
 
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
-        $query = "SELECT * FROM User";
+        $query = "SELECT * FROM user";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // var_dump($data);
+
         $users = [];
-        foreach ($data as  $user) {
-            $user = new User($user["id"], $user["nom"], $user["prenom"]);
-            $users[] = $user;
+        foreach ($data as $user) {
+            $users[] = new User($user["id"], $user["nom"], $user["prenom"]);
         }
         return $users;
     }
+
     public function getUserById(int $id): ?User
     {
         $stmt = $this->pdo->prepare("SELECT * FROM user WHERE id = ?");
@@ -33,5 +34,16 @@ class UserDao
             return new User($data['id'], $data['nom'], $data['prenom']);
         }
         return null;
+    }
+
+    public function deleteUserById(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM user WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+    public function insertUser(string $nom, string $prenom): bool
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO user (nom, prenom) VALUES (?, ?)");
+        return $stmt->execute([$nom, $prenom]);
     }
 }
